@@ -1,10 +1,10 @@
 use Northwind
 
---Store Procedure,küçük iþlemsel parçacýklardýr.Ýþlemlerin daha verimli þekilde yapýlmasýný saðlar.
---Sadece ilk çalýþtýðýnda execute plana alýnýr.Daha sonraki çalýþtýrmalarda alýnmaz bu nedenle daha performanslýdýr.
---Store Procedure yapýsý 'execute' komutu ile çalýþtýrýlýr.
+--Store Procedure,kï¿½ï¿½ï¿½k iï¿½lemsel parï¿½acï¿½klardï¿½r.ï¿½ï¿½lemlerin daha verimli ï¿½ekilde yapï¿½lmasï¿½nï¿½ saï¿½lar.
+--Sadece ilk ï¿½alï¿½ï¿½tï¿½ï¿½ï¿½nda execute plana alï¿½nï¿½r.Daha sonraki ï¿½alï¿½ï¿½tï¿½rmalarda alï¿½nmaz bu nedenle daha performanslï¿½dï¿½r.
+--Store Procedure yapï¿½sï¿½ 'execute' komutu ile ï¿½alï¿½ï¿½tï¿½rï¿½lï¿½r.
 
---Store procedure oluþturma
+--Store procedure oluï¿½turma
 
 create procedure sp_ornek
 as
@@ -54,3 +54,22 @@ end
 declare @adi varchar(20),@soyadi varchar(20);
 execute sp_output 2,@adi output,@soyadi output
 select @adi,@soyadi
+
+
+use Northwind
+
+create procedure SatisFiyatiSorgula(@personelid smallint,@satisToplami int output)
+as
+begin
+select @satisToplami=Sum(sd.BirimFiyati*sd.Miktar) from Satislar s 
+inner join Personeller p on s.PersonelID=p.PersonelID
+inner join Musteriler m on s.MusteriID=m.MusteriID 
+inner join [Satis Detaylari] sd on s.SatisID =sd.SatisID
+where s.PersonelID=@personelid
+group by(s.PersonelID)
+end
+
+
+declare @satisToplamFiyati varchar(50);
+execute SatisFiyatiSorgula 5,@satisToplamFiyati output;
+print(@satisToplamFiyati)
